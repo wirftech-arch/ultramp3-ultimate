@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra MP3 — YouTube MP3 & Video İndirici</title>
+<meta name="description" content="YouTube'dan MP3 ve video indirin. Ücretsiz müzik çalar, MP3 kesici, dönüştürücü.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fire: #FF4500;
+    --fire2: #FF6B35;
+    --fire3: #FF8C00;
+    --gold: #FFB800;
+    --bg: #F4F4F8;
+    --bg2: #EAEAEF;
+    --white: #FFFFFF;
+    --glass: rgba(255,255,255,0.72);
+    --glass2: rgba(255,255,255,0.55);
+    --border: rgba(255,255,255,0.9);
+    --border2: rgba(200,200,220,0.5);
+    --shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 16px 64px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.06);
+    --text: #1A1A2E;
+    --text2: #4A4A6A;
+    --muted: #8888AA;
+    --accent: #FF4500;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── BACKGROUND ── */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 10%, rgba(255,100,50,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 85% 90%, rgba(255,184,0,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 80% at 50% 50%, rgba(255,255,255,0.6) 0%, transparent 100%);
+    pointer-events:none;
+  }
+
+  /* subtle grid pattern */
+  body::after {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+  }
+
+  .wrap { position:relative; z-index:2; max-width:980px; margin:0 auto; padding:0 28px; }
+
+  /* ── NAV ── */
+  nav {
+    position:sticky; top:0; z-index:100;
+    background: rgba(244,244,248,0.82);
+    backdrop-filter: blur(24px) saturate(1.8);
+    border-bottom: 1px solid var(--border2);
+  }
+  nav .wrap {
+    display:flex; align-items:center; justify-content:space-between;
+    height:58px;
+  }
+  .nav-logo {
+    font-family:'Syne',sans-serif;
+    font-size:20px; font-weight:800;
+    letter-spacing:3px;
+    background:linear-gradient(135deg, var(--fire), var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .nav-right {
+    display:flex; align-items:center; gap:20px;
+  }
+  .nav-badge {
+    font-size:11px; font-weight:600; letter-spacing:1.5px;
+    color:var(--muted); text-transform:uppercase;
+  }
+  .nav-gh-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:7px 14px;
+    background: var(--glass);
+    border: 1px solid var(--border2);
+    border-radius:8px;
+    font-size:13px; font-weight:500;
+    color: var(--text2);
+    text-decoration:none;
+    transition:all 0.2s;
+    backdrop-filter: blur(8px);
+  }
+  .nav-gh-btn:hover {
+    background: var(--white);
+    border-color: rgba(180,180,200,0.6);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .nav-gh-btn svg { width:15px; height:15px; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 0 56px;
+    display:flex; align-items:center; gap:64px;
+  }
+
+  .hero-icon {
+    flex-shrink:0;
+    width:148px; height:148px;
+    border-radius:32px;
+    overflow:hidden;
+    background: linear-gradient(135deg,var(--fire),var(--fire3));
+    box-shadow:
+      0 0 0 1px rgba(255,69,0,0.15),
+      0 2px 0 1px rgba(255,255,255,0.9) inset,
+      var(--shadow-lg),
+      0 0 48px rgba(255,69,0,0.15);
+    animation: float 4s ease-in-out infinite, fadeUp 0.6s ease 0.1s both;
+    position:relative;
+  }
+  .hero-icon::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(145deg, rgba(255,255,255,0.35) 0%, transparent 50%);
+    border-radius:32px;
+    z-index:1;
+  }
+  .hero-icon img { width:100%; height:100%; object-fit:cover; position:relative; z-index:2; }
+  .hero-icon-placeholder {
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:64px;
+  }
+
+  @keyframes float {
+    0%,100% { transform:translateY(0px); }
+    50%      { transform:translateY(-10px); }
+  }
+
+  .hero-text { animation: fadeUp 0.6s ease 0.2s both; }
+
+  .hero-tag {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px;
+    background: var(--glass);
+    border: 1px solid var(--border2);
+    border-radius:100px;
+    font-size:12px; font-weight:500; letter-spacing:0.5px;
+    color: var(--fire2);
+    margin-bottom:20px;
+    backdrop-filter:blur(8px);
+  }
+  .hero-tag span { color:var(--muted); }
+
+  .hero-text h1 {
+    font-family:'Syne',sans-serif;
+    font-size:clamp(48px,7vw,80px);
+    font-weight:800;
+    line-height:0.92;
+    letter-spacing:-1px;
+    margin-bottom:20px;
+  }
+  .hero-text h1 .word-ultra { color:var(--text); }
+  .hero-text h1 .word-mp3 {
+    background:linear-gradient(135deg, var(--fire) 0%, var(--fire3) 50%, var(--gold) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .hero-text p {
+    font-size:16px; font-weight:400;
+    color: var(--text2);
+    line-height:1.7;
+    max-width:380px;
+    margin-bottom:32px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+
+  .btn-dl {
+    display:inline-flex; align-items:center; gap:12px;
+    padding:14px 28px;
+    background:linear-gradient(135deg, var(--fire), var(--fire3));
+    border-radius:12px;
+    font-size:15px; font-weight:600;
+    color:#fff;
+    text-decoration:none;
+    box-shadow: 0 4px 20px rgba(255,69,0,0.3), 0 1px 0 rgba(255,255,255,0.2) inset;
+    transition: all 0.2s ease;
+  }
+  .btn-dl:hover { transform:translateY(-2px); box-shadow: 0 8px 32px rgba(255,69,0,0.4), 0 1px 0 rgba(255,255,255,0.2) inset; }
+  .btn-dl:active { transform:translateY(0); }
+  .btn-dl svg { width:20px; height:20px; flex-shrink:0; }
+  .btn-dl-sub { font-size:11px; font-weight:400; opacity:0.8; display:block; margin-top:1px; }
+
+  .btn-secondary {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 22px;
+    background: var(--glass);
+    border: 1px solid var(--border2);
+    border-radius:12px;
+    font-size:14px; font-weight:500;
+    color: var(--text2);
+    text-decoration:none;
+    backdrop-filter:blur(8px);
+    transition:all 0.2s ease;
+  }
+  .btn-secondary:hover {
+    background: var(--white);
+    border-color: rgba(160,160,190,0.5);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display:flex; flex-wrap:wrap; gap:12px;
+    margin-top:44px;
+    animation: fadeUp 0.6s ease 0.35s both;
+  }
+  .stat-pill {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 20px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius:14px;
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
+  }
+  .stat-pill:hover { transform:translateY(-2px); box-shadow: var(--shadow-lg); background:var(--white); }
+  .stat-val {
+    font-family:'Syne',sans-serif;
+    font-size:22px; font-weight:800;
+    background:linear-gradient(135deg, var(--fire2), var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .stat-lbl { font-size:12px; font-weight:500; color:var(--muted); line-height:1.3; }
+
+  /* ── SECTION HEADER ── */
+  .section-label {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:600; letter-spacing:2.5px;
+    color: var(--fire); text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .section-label::before {
+    content:'';
+    width:16px; height:2px;
+    background: linear-gradient(90deg, var(--fire), var(--fire3));
+    border-radius:2px;
+  }
+  .section-title {
+    font-family:'Syne',sans-serif;
+    font-size:clamp(32px,4.5vw,48px);
+    font-weight:800;
+    line-height:1.05;
+    letter-spacing:-0.5px;
+    margin-bottom:44px;
+    color:var(--text);
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    padding: 80px 0;
+  }
+
+  .features-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:14px;
+  }
+
+  .feat-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius:20px;
+    padding:28px;
+    backdrop-filter:blur(16px);
+    box-shadow: var(--shadow);
+    transition:all 0.25s ease;
+    position:relative; overflow:hidden;
+    animation:fadeUp 0.5s ease calc(var(--i,0)*80ms) both;
+  }
+  .feat-card::before {
+    content:'';
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,rgba(255,100,50,0.35),transparent);
+    opacity:0; transition:opacity 0.25s;
+  }
+  .feat-card:hover {
+    transform:translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    background: var(--white);
+    border-color: rgba(255,180,150,0.3);
+  }
+  .feat-card:hover::before { opacity:1; }
+
+  .feat-icon-wrap {
+    width:48px; height:48px;
+    border-radius:14px;
+    background: linear-gradient(135deg, rgba(255,69,0,0.08), rgba(255,140,0,0.05));
+    border: 1px solid rgba(255,140,0,0.15);
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px;
+    margin-bottom:18px;
+  }
+  .feat-title {
+    font-family:'Syne',sans-serif;
+    font-size:17px; font-weight:700;
+    letter-spacing:-0.2px;
+    margin-bottom:8px;
+    color: var(--text);
+  }
+  .feat-desc {
+    font-size:13.5px; font-weight:400;
+    color: var(--text2);
+    line-height:1.65;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--border2), transparent);
+    margin:0;
+  }
+
+  /* ── INSTALL ── */
+  .install { padding:80px 0; }
+
+  .install-inner {
+    display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:start;
+  }
+
+  .steps { display:flex; flex-direction:column; gap:4px; }
+  .step {
+    display:flex; gap:20px; align-items:flex-start;
+    padding:20px;
+    border-radius:16px;
+    transition:all 0.2s;
+    cursor:default;
+  }
+  .step:hover {
+    background: var(--glass);
+    backdrop-filter:blur(8px);
+    box-shadow: var(--shadow);
+  }
+  .step-num {
+    flex-shrink:0;
+    width:36px; height:36px;
+    border-radius:10px;
+    background: linear-gradient(135deg, rgba(255,69,0,0.12), rgba(255,140,0,0.08));
+    border: 1px solid rgba(255,140,0,0.2);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Syne',sans-serif;
+    font-size:16px; font-weight:700; color:var(--fire2);
+  }
+  .step-text strong { display:block; font-size:15px; font-weight:600; margin-bottom:4px; color:var(--text); }
+  .step-text span { font-size:13.5px; font-weight:400; color:var(--text2); line-height:1.55; }
+
+  /* install note card */
+  .install-note {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius:20px;
+    padding:32px;
+    backdrop-filter:blur(16px);
+    box-shadow: var(--shadow);
+  }
+  .install-note-title {
+    font-family:'Syne',sans-serif;
+    font-size:18px; font-weight:700;
+    color:var(--text);
+    margin-bottom:16px;
+  }
+  .install-note p {
+    font-size:13.5px; font-weight:400; color:var(--text2);
+    line-height:1.65; margin-bottom:12px;
+  }
+  .install-note p:last-child { margin-bottom:0; }
+  .compat-list {
+    display:flex; flex-direction:column; gap:8px; margin-top:16px;
+  }
+  .compat-item {
+    display:flex; align-items:center; gap:10px;
+    padding:10px 14px;
+    background:rgba(255,255,255,0.6);
+    border:1px solid rgba(200,200,220,0.4);
+    border-radius:10px;
+    font-size:13px; font-weight:500; color:var(--text2);
+  }
+  .compat-dot {
+    width:7px; height:7px; border-radius:50%;
+    background: linear-gradient(135deg, var(--fire), var(--gold));
+    flex-shrink:0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border2);
+    padding:36px 0;
+    background: rgba(244,244,248,0.8);
+    backdrop-filter: blur(12px);
+  }
+  footer .wrap {
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:16px;
+  }
+  .footer-logo {
+    font-family:'Syne',sans-serif; font-size:18px; font-weight:800;
+    letter-spacing:2px;
+    background:linear-gradient(135deg, var(--fire), var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  footer p { font-size:12.5px; color:var(--muted); }
+  footer a { color:var(--muted); text-decoration:none; transition:color 0.2s; }
+  footer a:hover { color:var(--fire2); }
+
+  /* ── APK PICKER ── */
+  .apk-picker { margin-bottom:4px; }
+
+  .apk-tabs {
+    display:inline-flex;
+    background: rgba(200,200,220,0.25);
+    border: 1px solid var(--border2);
+    border-radius:12px;
+    padding:4px;
+    gap:4px;
+    margin-bottom:14px;
+    backdrop-filter: blur(8px);
+  }
+  .apk-tab {
+    display:flex; align-items:center; gap:6px;
+    padding:8px 16px;
+    border-radius:9px;
+    border:none; background:transparent;
+    font-family:'Instrument Sans',sans-serif;
+    font-size:13px; font-weight:500;
+    color:var(--muted);
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .apk-tab.active {
+    background: var(--white);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .apk-tab:hover:not(.active) { color:var(--text2); }
+  .apk-tab-icon { font-size:15px; }
+
+  .apk-panel { display:none; }
+  .apk-panel.active { display:block; animation: fadeUp 0.2s ease both; }
+
+  .apk-note {
+    margin-top:9px;
+    font-size:12px; font-weight:400;
+    color: var(--muted);
+  }
+
+  .btn-dl-alt {
+    background: linear-gradient(135deg, #555577, #3A3A5C) !important;
+    box-shadow: 0 4px 20px rgba(80,80,120,0.25), 0 1px 0 rgba(255,255,255,0.15) inset !important;
+  }
+  .btn-dl-alt:hover {
+    box-shadow: 0 8px 32px rgba(80,80,120,0.35), 0 1px 0 rgba(255,255,255,0.15) inset !important;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:700px) {
+    .hero { flex-direction:column; align-items:flex-start; gap:28px; padding:44px 0 36px; }
+    .hero-icon { width:110px; height:110px; border-radius:24px; }
+    .install-inner { grid-template-columns:1fr; gap:32px; }
+    .stats-row { gap:10px; }
+    .btn-secondary { display:none; }
+    nav .nav-right .nav-badge { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <span class="nav-logo">ULTRA MP3</span>
+    <div class="nav-right">
+      <span class="nav-badge">v6.2 · Android</span>
+      <a href="https://github.com/wirftech-arch" class="nav-gh-btn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        wirftech-arch
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-icon">
+      <div class="hero-icon-placeholder">🎵</div>
+      <img src="icon.png" alt="Ultra MP3" style="position:absolute;inset:0;z-index:3;" onerror="this.style.display='none'">
+    </div>
+    <div class="hero-text">
+      <div class="hero-tag">
+        🔥 Wi-RF Corporation <span>·</span> Android App
+      </div>
+      <h1>
+        <span class="word-ultra">ULTRA</span><br>
+        <span class="word-mp3">MP3</span>
+      </h1>
+      <p>YouTube'dan MP3 ve video indirin. Yerleşik müzik çalar, MP3 kesici, birleştirici ve dönüştürücü.</p>
+      <!-- APK SEÇİCİ -->
+      <div class="apk-picker">
+        <div class="apk-tabs">
+          <button class="apk-tab active" onclick="switchApk('arm64', this)">
+            <span class="apk-tab-icon">📱</span>
+            <span class="apk-tab-label">2016 Sonrası</span>
+          </button>
+          <button class="apk-tab" onclick="switchApk('arm32', this)">
+            <span class="apk-tab-icon">📟</span>
+            <span class="apk-tab-label">2016 Öncesi</span>
+          </button>
+        </div>
+
+        <div id="apk-arm64" class="apk-panel active">
+          <a href="ultramp3_arm64.apk" class="btn-dl">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.84v4h5.66V9h3.84L12 2z"/></svg>
+            <div>
+              APK İndir — arm64
+              <span class="btn-dl-sub">Modern telefonlar · 2016+ · ~25 MB</span>
+            </div>
+          </a>
+          <div class="apk-note">✅ Çoğu yeni telefon için bu seçenek</div>
+        </div>
+
+        <div id="apk-arm32" class="apk-panel">
+          <a href="ultramp3_arm32.apk" class="btn-dl btn-dl-alt">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.84v4h5.66V9h3.84L12 2z"/></svg>
+            <div>
+              APK İndir — armeabi
+              <span class="btn-dl-sub">Eski 32-bit telefonlar · 2016 öncesi · ~23 MB</span>
+            </div>
+          </a>
+          <div class="apk-note">⚙️ Eski cihazlarda çalışmıyorsa bu seçeneği deneyin</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <a href="#nasil-yuklenir" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+          Nasıl Yüklenir?
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-pill">
+      <div class="stat-val">4K</div>
+      <div class="stat-lbl">Video<br>İndirme</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val">320</div>
+      <div class="stat-lbl">kbps<br>MP3</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val">15+</div>
+      <div class="stat-lbl">Renk<br>Teması</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val">API 24</div>
+      <div class="stat-lbl">Min<br>Android</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val">~25</div>
+      <div class="stat-lbl">MB<br>Boyut</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider" style="margin-top:72px;"></div>
+
+<!-- FEATURES -->
+<div class="wrap">
+  <section class="features">
+    <div class="section-label">Özellikler</div>
+    <div class="section-title">Her Şey Bir Arada</div>
+    <div class="features-grid">
+      <div class="feat-card" style="--i:0">
+        <div class="feat-icon-wrap">⬇️</div>
+        <div class="feat-title">YouTube MP3 İndirici</div>
+        <div class="feat-desc">YouTube videolarını anında MP3'e dönüştürün. 128kbps'den 320kbps'e kadar kalite seçeneği.</div>
+      </div>
+      <div class="feat-card" style="--i:1">
+        <div class="feat-icon-wrap">🎬</div>
+        <div class="feat-title">Video İndirme</div>
+        <div class="feat-desc">360p'den 4K'ya kadar tüm kalite seçenekleriyle video indirin. Ses ve video otomatik birleştirilir.</div>
+      </div>
+      <div class="feat-card" style="--i:2">
+        <div class="feat-icon-wrap">🎵</div>
+        <div class="feat-title">Müzik Çalar</div>
+        <div class="feat-desc">Cihazınızdaki tüm müzikleri çalın. Playlist, shuffle, repeat, EQ ve tema desteği.</div>
+      </div>
+      <div class="feat-card" style="--i:3">
+        <div class="feat-icon-wrap">✂️</div>
+        <div class="feat-title">MP3 Kesici</div>
+        <div class="feat-desc">Müzik dosyalarını saniye hassasiyetiyle kesin. Zil sesi ve klip oluşturun.</div>
+      </div>
+      <div class="feat-card" style="--i:4">
+        <div class="feat-icon-wrap">🔗</div>
+        <div class="feat-title">MP3 Birleştirici</div>
+        <div class="feat-desc">Birden fazla ses dosyasını tek bir MP3'te birleştirin. Sürükle-bırak ile kolay kullanım.</div>
+      </div>
+      <div class="feat-card" style="--i:5">
+        <div class="feat-icon-wrap">🎨</div>
+        <div class="feat-title">15 Tema</div>
+        <div class="feat-desc">Kırmızı, Emerald, Violet, Batman ve daha fazlası. Koyu/açık mod desteği.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="divider"></div>
+
+<!-- INSTALL -->
+<div class="wrap">
+  <section class="install" id="nasil-yuklenir">
+    <div class="section-label">Kurulum</div>
+    <div class="section-title">3 Adımda Kur</div>
+    <div class="install-inner">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <strong>APK'yı İndir</strong>
+            <span>Yukarıdaki "APK İndir" butonuna tıklayın. Dosya cihazınıza inecek.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <strong>Bilinmeyen Kaynak İzni Ver</strong>
+            <span>Ayarlar → Güvenlik → Bilinmeyen Kaynaklardan Yükleme'yi etkinleştirin. Sadece bir kez sorulur.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <strong>APK'yı Aç ve Kur</strong>
+            <span>İndirilen dosyayı açın, "Yükle"ye basın. Kurulum 10 saniye sürer.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="install-note">
+        <div class="install-note-title">📋 Sistem Gereksinimleri</div>
+        <p>Ultra MP3, Android 7.0 ve üzeri tüm cihazlarla uyumludur. İki farklı mimari için ayrı APK mevcuttur.</p>
+        <div class="compat-list">
+          <div class="compat-item">
+            <div class="compat-dot"></div>
+            <span><strong>arm64-v8a</strong> — 2016 sonrası modern cihazlar</span>
+          </div>
+          <div class="compat-item">
+            <div class="compat-dot"></div>
+            <span><strong>armeabi-v7a</strong> — Eski 32-bit cihazlar</span>
+          </div>
+          <div class="compat-item">
+            <div class="compat-dot"></div>
+            <span><strong>Android 7.0+</strong> — API Level 24 minimum</span>
+          </div>
+          <div class="compat-item">
+            <div class="compat-dot"></div>
+            <span><strong>~25 MB</strong> — Yükleme boyutu</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <span class="footer-logo">ULTRA MP3</span>
+    <p>© 2024 Wi-RF Corporation · <a href="https://sites.google.com/view/wi-rf-tech/ana-sayfa">Gizlilik Politikası</a> · <a href="https://github.com/wirftech-arch" target="_blank" rel="noopener">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+function switchApk(type, btn) {
+  document.querySelectorAll('.apk-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.apk-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('apk-' + type).classList.add('active');
+}
+</script>
+</body>
+</html>
