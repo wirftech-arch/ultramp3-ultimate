@@ -1,5 +1,5 @@
 {
-  "app_enabled": false,
+  "app_enabled": true,
   "kill_message": "Uygulama şu an bakım modunda. Lütfen daha sonra tekrar deneyin.",
   "min_version": 61,
   "latest_version": 61,
