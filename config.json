@@ -1,0 +1,8 @@
+{
+  "app_enabled": true,
+  "kill_message": "Uygulama şu an bakım modunda. Lütfen daha sonra tekrar deneyin.",
+  "min_version": 61,
+  "latest_version": 61,
+  "update_message": "Yeni bir güncelleme mevcut! Hata düzeltmeleri ve iyileştirmeler için güncelleyin.",
+  "download_url": "https://github.com/wirftech-arch/ultramp3-ultimate/releases/latest/download/ultramp3.apk"
+}
